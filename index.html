@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eternas Homenagens</title>
+    <style>
+        :root { --primary-color: #5b21b6; --primary-light: #7c3aed; --bg-color: #f8fafc; --card-bg: #ffffff; --text-color: #1e293b; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        header { position: relative; width: 100%; height: 200px; background-color: var(--primary-color); overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        header img.bg-img { width: 100%; height: 100%; object-fit: cover; object-position: center; position: absolute; top: 0; left: 0; z-index: 1; }
+        header .header-content { position: relative; z-index: 2; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.6); text-align: center; font-size: 1.8rem; font-weight: bold; letter-spacing: 2px; }
+        main { flex: 1; padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .grid-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card { background-color: var(--card-bg); border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .card h3 { margin-top: 15px; font-size: 1.2rem; color: var(--primary-color); }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; z-index: 1000; }
+        .modal-content { background-color: white; padding: 30px; border-radius: 12px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #64748b; }
+        button.action-btn { background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; margin-top: 10px; transition: background-color 0.2s; }
+        button.action-btn:hover { background-color: var(--primary-light); }
+        input[type="text"], input[type="file"] { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+        .color-options { display: flex; gap: 15px; flex-wrap: wrap; margin: 15px 0; align-items: center; }
+        .color-circle { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 2px solid #cbd5e1; }
+    </style>
+</head>
+<body>
+    <header>
+        <img id="header-bg" class="bg-img" src="" alt="Fundo" style="display:none;">
+        <div class="header-content">ETERNAS HOMENAGENS</div>
+    </header>
+    <main>
+        <div style="text-align: right; margin-bottom: 10px;">
+            <input type="file" id="bg-file-input" accept="image/*" style="display: none;" onchange="mudarFundo(event)">
+            <button class="action-btn" onclick="document.getElementById('bg-file-input').click()">🖼️ Alterar Fundo</button>
+        </div>
+        <div class="grid-menu">
+            <div class="card" onclick="abrirModal('modal-galeria')"><h3>Galeria</h3></div>
+            <div class="card" onclick="abrirModal('modal-cores')"><h3>Mostrar Cores</h3></div>
+            <div class="card" onclick="abrirModal('modal-encomendas')"><h3>Encomendas</h3></div>
+            <div class="card" onclick="abrirModal('modal-ia')"><h3>Rascunho IA</h3></div>
+        </div>
+    </main>
+    <div id="modal-cores" class="modal"><div class="modal-content">
+        <span class="close-btn" onclick="fecharModal('modal-cores')">&times;</span>
+        <h2>Paleta de Cores</h2><p>Escolha um tom para personalizar a aplicação:</p>
+        <div class="color-options">
+            <div class="color-circle" style="background-color: #5b21b6;" onclick="mudarCorTema('#5b21b6')"></div>
+            <div class="color-circle" style="background-color: #be185d;" onclick="mudarCorTema('#be185d')"></div>
+            <div class="color-circle" style="background-color: #047857;" onclick="mudarCorTema('#047857')"></div>
+            <div class="color-circle" style="background-color: #1d4ed8;" onclick="mudarCorTema('#1d4ed8')"></div>
+        </div>
+        <div style="margin-top: 20px;"><label for="custom-color"><strong>Outras cores (Personalizada):</strong></label>
+            <input type="color" id="custom-color" style="width: 100px; height: 40px; border: none; cursor: pointer; display: block; margin-top: 5px;" onchange="mudarCorTema(this.value)">
+        </div>
+    </div></div>
+    <div id="modal-ia" class="modal"><div class="modal-content">
+        <span class="close-btn" onclick="fecharModal('modal-ia')">&times;</span>
+        <h2>Gerador de Rascunho IA</h2><p>Carregue uma foto opcional e descreva o que pretende alterar:</p>
+        <label>Foto de referência:</label><input type="file" id="ia-image-input" accept="image/*">
+        <label>Instrução / Prompt:</label><input type="text" id="ia-prompt" placeholder="Ex: Flores artificiais elegantes em tons pastel...">
+        <button class="action-btn" onclick="gerarComIA()">Gerar Rascunho</button>
+        <div id="ia-result" style="margin-top: 20px; text-align: center;"></div>
+    </div></div>
+    <div id="modal-galeria" class="modal"><div class="modal-content"><span class="close-btn" onclick="fecharModal('modal-galeria')">&times;</span><h2>Galeria</h2><p>Conteúdo da galeria aqui.</p></div></div>
+    <div id="modal-encomendas" class="modal"><div class="modal-content"><span class="close-btn" onclick="fecharModal('modal-encomendas')">&times;</span><h2>Encomendas</h2><p>Gestão de encomendas aqui.</p></div></div>
+    <script>
+        function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+        function mudarFundo(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const bgImg = document.getElementById('header-bg');
+                    bgImg.src = e.target.result;
+                    bgImg.style.display = 'block';
+                    localStorage.setItem('eterna_bg', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        window.onload = function() {
+            const savedBg = localStorage.getItem('eterna_bg');
+            if (savedBg) {
+                const bgImg = document.getElementById('header-bg');
+                bgImg.src = savedBg;
+                bgImg.style.display = 'block';
+            }
+            const savedColor = localStorage.getItem('eterna_color');
+            if (savedColor) document.documentElement.style.setProperty('--primary-color', savedColor);
+        };
+        function mudarCorTema(color) {
+            document.documentElement.style.setProperty('--primary-color', color);
+            localStorage.setItem('eterna_color', color);
+        }
+        function gerarComIA() {
+            const promptInput = document.getElementById('ia-prompt').value;
+            const resultDiv = document.getElementById('ia-result');
+            if (!promptInput.trim()) { alert('Por favor, escreva uma descrição para o rascunho.'); return; }
+            resultDiv.innerHTML = '<p>A gerar imagem com IA...</p>';
+            const encodedPrompt = encodeURIComponent(promptInput);
+            const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true`;
+            setTimeout(() => {
+                resultDiv.innerHTML = `<p><strong>Resultado gerado:</strong></p><img src="${imageUrl}" alt="Rascunho IA" style="max-width: 100%; border-radius: 8px; margin-top: 10px;"><br><a href="${imageUrl}" target="_blank" download="rascunho.jpg"><button class="action-btn" style="background-color: #047857; margin-top: 10px;">Guardar Imagem</button></a>`;
+            }, 500);
+        }
+    </script>
+</body>
+</html>
